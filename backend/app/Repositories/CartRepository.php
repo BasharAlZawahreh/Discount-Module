@@ -85,9 +85,9 @@ class CartRepository implements CartRepositoryInterface
         });
 
         if (!$this->isQuantityBasedOfferApplied) {
-            return  $total;
+             return  $total;
         }
-        
+
         return $total - ($total * $this->discount_percentage / 100);
     }
 }
