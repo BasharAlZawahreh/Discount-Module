@@ -6,6 +6,7 @@ use App\Models\Cart;
 use App\Models\Offer;
 use App\Models\Product;
 use Illuminate\Support\Collection;
+use Stevebauman\Location\Facades\Location;
 
 class CartRepository implements CartRepositoryInterface
 {
@@ -15,6 +16,9 @@ class CartRepository implements CartRepositoryInterface
     protected $isTotalBasedOffer;
     protected $discount_percentage;
     protected $totalMoreThan;
+    protected $countryFreeShipping;
+    protected $isFreeShippingTotalBased;
+    protected $isFreeShippingCountryBased;
 
     public function __construct()
     {
@@ -22,6 +26,8 @@ class CartRepository implements CartRepositoryInterface
         $this->offers = Offer::with('options')->get();
         $this->isQuantityBasedOfferApplied = false;
         $this->isTotalBasedOffer = false;
+        $this->isFreeShippingTotalBased = false;
+        $this->isFreeShippingCountryBased = false;
     }
 
     public function get(): Collection
@@ -58,10 +64,18 @@ class CartRepository implements CartRepositoryInterface
                     $this->discount_percentage = $offerOptions['Quantity more than']->first()->percentge_value;
                 }
             } elseif ($offer['name'] === 'Order total-based discount') {
-                if ( in_array('Total more than', $offerOptions->keys()->toArray())) {
+                if (in_array('Total more than', $offerOptions->keys()->toArray())) {
                     $this->isTotalBasedOffer = true;
                     $this->totalMoreThan = $offerOptions['Total more than']->first()->factor;
                     $this->discount_percentage = $offerOptions['Total more than']->first()->percentge_value;
+                }
+            } elseif ($offer['name'] === 'Free Delivery') {
+                if (in_array('For Total more than', $offerOptions->keys()->toArray())) {
+                    $this->totalMoreThan = $offerOptions['For Total more than']->first()->factor;
+                    $this->isFreeShippingTotalBased = true;
+                } elseif (in_array('For country', $offerOptions->keys()->toArray())) {
+                    $this->countryFreeShipping = $offerOptions['For country']->first()->factor;
+                    $this->isFreeShippingCountryBased = true;
                 }
             }
         }
@@ -93,11 +107,26 @@ class CartRepository implements CartRepositoryInterface
         });
 
         if (
-            ($this->isTotalBasedOffer && $this->totalMoreThan > $total) ||($this->isQuantityBasedOfferApplied)
+            ($this->isTotalBasedOffer && $this->totalMoreThan > $total) || ($this->isQuantityBasedOfferApplied)
         ) {
             $total -= ($total * $this->discount_percentage / 100);
         }
 
         return $total;
+    }
+
+    public function shippingFees()
+    {
+        $total = $this->total();
+
+        if (($this->isFreeShippingTotalBased && $total > $this->totalMoreThan) ||
+            ($this->isFreeShippingCountryBased &&
+                Location::get()->countryName === $this->countryFreeShipping
+            )
+        ) {
+            return 0;
+        }
+
+
     }
 }
