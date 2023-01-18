@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Offer;
 use App\Models\Product;
-use App\Repositories\Cart\CartRepositoryInterface;
+use App\Repositories\CartRepositoryInterface;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -43,20 +43,5 @@ class CartController extends Controller
         return [
             'message' => 'Item deleted!',
         ];
-    }
-
-    public function checkOffers()
-    {
-        // $offers = Offer::where('status','active')->get();
-
-        // foreach ($offers as $offer) {
-        //     if ($offer['name']==='Buy X get Y') {
-        //         return;
-        //     }
-
-        // }
-        // 'name'=>'Quantity-based discount',
-        //  'name'=>'Free Delivery For country',
-        //  'name'=>'Free Delivery If Total bigger than value'
     }
 }

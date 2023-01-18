@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Repositories\Cart\CartRepository;
-use App\Repositories\Cart\CartRepositoryInterface;
+use App\Repositories\CartRepository;
+use App\Repositories\CartRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider

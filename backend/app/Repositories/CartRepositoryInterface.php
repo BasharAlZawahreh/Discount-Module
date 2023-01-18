@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Cart;
+namespace App\Repositories;
 
 use App\Models\Product;
 use Illuminate\Support\Collection;
@@ -18,4 +18,6 @@ interface CartRepositoryInterface
     public function empty();
 
     public function total() : float;
+
+    public function shippingFees();
 }

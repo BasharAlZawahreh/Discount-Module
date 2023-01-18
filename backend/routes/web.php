@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Product;
+use App\Repositories\CartRepositoryInterface;
 use Illuminate\Support\Facades\Route;
 use Stevebauman\Location\Facades\Location;
 
@@ -15,15 +17,10 @@ use Stevebauman\Location\Facades\Location;
 |
 */
 
-Route::get('/', function () {
-    dd(Location::get());
-    // $ip = request()->ip();
-    // if ($position = Location::get()) {
-    //     // Successfully retrieved position.
-    //     echo $position->countryName;
-    // }
-    // $currentUserInfo = Location::get($ip);
-    // return view('welcome', [
-    //     'info' => $currentUserInfo
-    // ]);
+Route::get('/', function (CartRepositoryInterface $cart) {
+    // $product = Product::find(1);
+    // $cart->add($product);
+
+    dd($cart->shippingFees());
+    return view('welcome');
 });

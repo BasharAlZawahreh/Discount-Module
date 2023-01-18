@@ -21,7 +21,7 @@ class Cart extends Model
         });
 
         static::creating(function(Cart $cart){
-            $cart->cart_id = self::getCookieId();
+            $cart->cookie_id = self::getCookieId();
         });
     }
 
@@ -40,8 +40,4 @@ class Cart extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function address()
-    {
-        return $this->belongsTo(Address::class);
-    }
 }
