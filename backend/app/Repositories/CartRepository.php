@@ -116,17 +116,17 @@ class CartRepository implements CartRepositoryInterface
                 ->groupBy('name');
 
             if ($offer['offer_name'] === 'Buy X get Y') {
-                $product_id = $offerOptions['Product Id']->first()->factor;
                 if (
                     in_array('Product Id', $offerOptions->keys()->toArray()) &&
-                    in_array($product_id, $product_ids->toArray())
-                ) {
+                    in_array($offerOptions['Product Id']->first()->factor, $product_ids->toArray())
+                    ) {
+                    $product_id = $offerOptions['Product Id']->first()->factor;
                     $product = Product::find($product_id);
-                    $productsRange = [$product->price + 10, $product->price - 10];
+                    $productsRange = [$product->price -5, $product->price +5];
 
                     $randomProduct = Product::whereBetween('price', $productsRange)
-                        ->inRandomOrder()
-                        ->first();
+                    ->inRandomOrder()
+                    ->first();
 
                     Cart::firstOrCreate(['product_id' => $randomProduct->id])
                         ->increment('quantity', 1);
