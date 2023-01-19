@@ -24,6 +24,14 @@ const ALL_PRODUCTS = gql`
     }
 }
 `
+const ALL_COUNTRIES = gql`
+{
+    allCountries{
+        code,
+        name
+    }
+}
+`
 
 const Edit_OPTION = gql`
     mutation($id:ID!, $factor:String!, $status:String!, $percentge_value:Float!){
@@ -40,6 +48,7 @@ const Edit_OPTION = gql`
 function Admin() {
     const offers = useQuery(OFFERS_QUERY);
     const products = useQuery(ALL_PRODUCTS);
+    const countries = useQuery(ALL_COUNTRIES);
     const [editOption, { data, error }] = useMutation(Edit_OPTION)
 
     console.log(products);
@@ -164,6 +173,29 @@ function Admin() {
                                             }
                                         </select>
                                     }
+
+                                    {
+                                        form.name === 'For country' &&
+                                        <select className="form-select form-select-lg mb-3 mt-2"
+                                            value={form.factor}
+                                            onChange={((e) => {
+                                                setForm({
+                                                    ...form,
+                                                    factor: e.target.value
+                                                })
+                                            })}
+                                        >
+                                            {
+                                                countries.data &&
+                                                countries.data.allCountries.map((product) => {
+                                                    return <option value={product.code}>
+                                                        {product.name}
+                                                    </option>
+                                                })
+                                            }
+                                        </select>
+                                    }
+
 
                                     {form.percentge_value > 0 &&
                                         <>

@@ -3,9 +3,11 @@
 declare(strict_types = 1);
 
 use App\GraphQL\Queries\ActiveOffers;
+use App\GraphQL\Queries\AllCountries;
 use App\GraphQL\Queries\AllOffers;
 use App\GraphQL\Queries\AllProducts;
 use App\GraphQL\Types\JsonDataType;
+use App\GraphQL\Types\JsonType;
 use App\GraphQL\Types\OfferType;
 use App\GraphQL\Types\OptionType;
 use App\GraphQL\Types\OptionTypeType;
@@ -86,7 +88,8 @@ return [
             'query' => [
                 // ExampleQuery::class,
                 AllOffers::class,
-                AllProducts::class
+                AllProducts::class,
+                AllCountries::class
             ],
             'mutation' => [
                 // ExampleMutation::class,
@@ -97,7 +100,8 @@ return [
                 // ExampleType::class,
                 OfferType::class,
                 OptionType::class,
-                ProductType::class
+                ProductType::class,
+                JsonType::class
             ],
 
             // Laravel HTTP middleware
