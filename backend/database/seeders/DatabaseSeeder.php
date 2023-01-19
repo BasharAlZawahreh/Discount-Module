@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
         Offer::create([
             'offer_name' => 'Buy X get Y',
         ])->options()->create([
-            'name' => "1",
+            'name' => "Product Id",
             "factor" => "1",
         ]);
 
@@ -55,7 +55,7 @@ class DatabaseSeeder extends Seeder
         ]);
         $offer_free->options()->create([
             'name' => 'For country',
-            'factor' => 'JO',
+            'factor' => 'US',
         ]);
         $offer_free->options()->create([
             'name' => 'For Total more than',

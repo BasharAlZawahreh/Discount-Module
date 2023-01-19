@@ -16,6 +16,15 @@ const OFFERS_QUERY = gql`
 }
 `
 
+const ALL_PRODUCTS = gql`
+{
+    allProducts{
+        id,
+        name
+    }
+}
+`
+
 const Edit_OPTION = gql`
     mutation($id:ID!, $factor:String!, $status:String!, $percentge_value:Float!){
         updateOfferOption(id:$id, factor:$factor, status:$status, percentge_value:$percentge_value){
@@ -30,22 +39,23 @@ const Edit_OPTION = gql`
 
 function Admin() {
     const offers = useQuery(OFFERS_QUERY);
+    const products = useQuery(ALL_PRODUCTS);
     const [editOption, { data, error }] = useMutation(Edit_OPTION)
 
-
+    console.log(products);
     const [form, setForm] = useState({
-        id:'',
+        id: '',
         name: '',
         factor: '',
         status: '',
-        percentge_value: 0
+        percentge_value: 0,
     })
 
     const handleSubmit = (e) => {
         e.preventDefault();
         editOption({
             variables: {
-                id:form.id,
+                id: form.id,
                 factor: form.factor,
                 status: form.status,
                 percentge_value: +form.percentge_value
@@ -84,27 +94,26 @@ function Admin() {
                                 <td>
                                     {offer.options.map((option) => {
                                         return <div key={option.id} className="d-flex justify-content-between mt-2">
-                                       
-                                            {option.percentge_value>0 && <div className='col'>{option.percentge_value}%</div>}
+
+                                            {option.percentge_value > 0 && <div className='col'>{option.percentge_value}%</div>}
                                             {!option.percentge_value && <div className='col'></div>}
-                                            
+
                                             <div className='col px-2'>{option.name}</div>
                                             <div className='col px-2'>{option.factor}</div>
                                             <div className='col px-2'>
                                                 <button
                                                     onClick={() => setForm({
-                                                        id:option.id,
+                                                        id: option.id,
                                                         name: option.name,
                                                         factor: option.factor,
                                                         status: option.status,
-                                                        percentge_value: option.percentge_value
+                                                        percentge_value: option.percentge_value,
                                                     })}
                                                     type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editOffer">
                                                     Edit
                                                 </button>
                                             </div>
                                         </div>
-
                                     })}
                                 </td>
                             </tr>)
@@ -125,12 +134,38 @@ function Admin() {
                             <div className="modal-body">
                                 <div className="mb-3">
                                     <label htmlFor="name" className="form-label">{form.name}</label>
-                                    <input value={form.factor} onChange={(e) => setForm({
-                                        ...form,
-                                        factor: e.target.value
-                                    })} type="text" className="form-control" id="name" />
+                                    {
+                                        !form.name === 'Product Id' &&
+                                        <input value={form.factor}
+                                            onChange={(e) => setForm({
+                                                ...form,
+                                                factor: e.target.value
+                                            })} type="text" className="form-control" id="name" />
+                                    }
 
-                                    {form.percentge_value>0 &&
+                                    {
+                                        form.name === 'Product Id' &&
+                                        <select className="form-select form-select-lg mb-3 mt-2"
+                                            value={form.factor}
+                                            onChange={((e) => {
+                                                setForm({
+                                                    ...form,
+                                                    factor: e.target.value
+                                                })
+                                            })}
+                                        >
+                                            {
+                                                products.data &&
+                                                products.data.allProducts.map((product) => {
+                                                    return <option value={product.id}>
+                                                        {product.name}
+                                                    </option>
+                                                })
+                                            }
+                                        </select>
+                                    }
+
+                                    {form.percentge_value > 0 &&
                                         <>
                                             <label htmlFor="name" className="form-label mt-2">Percntage</label>
                                             <input value={form.percentge_value}
