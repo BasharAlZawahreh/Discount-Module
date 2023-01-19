@@ -7,6 +7,7 @@ use App\Models\Offer;
 use App\Models\Product;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Http;
 use Stevebauman\Location\Facades\Location;
 
 class CartRepository implements CartRepositoryInterface
@@ -85,11 +86,12 @@ class CartRepository implements CartRepositoryInterface
     public function shippingFees()
     {
         $total = $this->total();
+        $userCountryCode = Http::get('https://ipapi.co/json/')->json('country_code');
 
         if (($this->isFreeShippingTotalBased && $total > $this->totalMoreThan
             ) ||
             ($this->isFreeShippingCountryBased &&
-                Location::get()->countryCode === $this->countryFreeShipping
+                $userCountryCode === $this->countryFreeShipping
             )
         ) {
             return 0;
@@ -120,11 +122,11 @@ class CartRepository implements CartRepositoryInterface
                     in_array($product_id, $product_ids->toArray())
                 ) {
                     $product = Product::find($product_id);
-                    $productsRange = [$product->price + 10, $product->price -10];
+                    $productsRange = [$product->price + 10, $product->price - 10];
 
-                    $randomProduct = Product::whereBetween('price',$productsRange)
-                                    ->inRandomOrder()
-                                    ->first();
+                    $randomProduct = Product::whereBetween('price', $productsRange)
+                        ->inRandomOrder()
+                        ->first();
 
                     Cart::firstOrCreate(['product_id' => $randomProduct->id])
                         ->increment('quantity', 1);
